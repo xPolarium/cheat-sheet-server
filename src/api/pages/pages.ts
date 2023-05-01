@@ -1,5 +1,7 @@
 import { Request, Response, Router } from "express";
 
+import { prisma } from "../../utils/prisma.server";
+
 export const pagesRouter = Router();
 
 pagesRouter.get("/", (req: Request, res: Response) => {

@@ -13,3 +13,11 @@ usersRouter.get("/", async (req: Request, res: Response) => {
 
 	res.status(200).json(users);
 });
+
+usersRouter.get("/:id", async (req: Request, res: Response) => {
+	const users = await prisma.user.findFirst({
+		where: {
+			id: Number(req.params.id),
+		},
+	});
+});
