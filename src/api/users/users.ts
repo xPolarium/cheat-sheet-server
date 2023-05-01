@@ -20,4 +20,6 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
 			id: Number(req.params.id),
 		},
 	});
+
+	res.status(200).json(users);
 });
