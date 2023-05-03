@@ -11,10 +11,12 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
-  page  Page[]
+  id           Int     @id @default(autoincrement())
+  email        String? @unique
+  username     String
+  passwordHash String
+  salt         String
+  page         Page[]
 }
 
 model Page {
