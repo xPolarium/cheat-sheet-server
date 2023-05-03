@@ -3,13 +3,13 @@ import { PrismaClient } from "@prisma/client";
 let prisma: PrismaClient;
 
 declare global {
-	var __prisma: PrismaClient | undefined;
+	var prismaClient: PrismaClient | undefined;
 }
 
-if (!global.__prisma) {
-	global.__prisma = new PrismaClient();
+if (!global.prismaClient) {
+	global.prismaClient = new PrismaClient();
 }
 
-prisma = global.__prisma;
+prisma = global.prismaClient;
 
 export { prisma };

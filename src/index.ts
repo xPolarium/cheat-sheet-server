@@ -7,10 +7,16 @@ const app = express();
 
 const SERVER_PORT = 3000;
 
+app.use(express.json());
+
 app.use("/api", usersRouter);
 app.use("/api", pagesRouter);
 
 app.use("/", authRouter);
+
+app.get("/", () => {
+	return "Hello";
+});
 
 app.listen(SERVER_PORT, () => {
 	console.log(`LISTENING ON PORT http://localhost:${SERVER_PORT}/`);

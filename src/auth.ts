@@ -10,7 +10,7 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
 	try {
 		const reqBody = registerSchema.parse(req.body);
 
-		let salt = crypto.randomBytes(16);
+		const salt = crypto.randomBytes(16);
 
 		crypto.pbkdf2(
 			reqBody.password,
@@ -21,17 +21,15 @@ authRouter.post("/signup", async (req: Request, res: Response) => {
 			async (error, passwordHash) => {
 				if (error) throw new Error(error.message);
 
-				await prisma.user
-					.create({
-						data: {
-							username: reqBody.username,
-							passwordHash: passwordHash.toString(),
-							salt: salt.toString(),
-						},
-					})
-					.then((_user) => {
-						res.redirect("/login");
-					});
+				const { id, username } = await prisma.user.create({
+					data: {
+						username: reqBody.username,
+						passwordHash: passwordHash.toString(),
+						salt: salt.toString(),
+					},
+				});
+
+				res.status(200).json({ id, username });
 			}
 		);
 	} catch (error) {
