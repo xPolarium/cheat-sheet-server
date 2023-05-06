@@ -1,11 +1,13 @@
 import express from "express";
 
+import dotenv from "dotenv";
+
 import { pagesRouter, usersRouter } from "./api/apiRoutes";
 import { authRouter } from "./auth";
 
-const app = express();
+dotenv.config();
 
-const SERVER_PORT = 3000;
+const app = express();
 
 app.use(express.json());
 
@@ -18,6 +20,8 @@ app.get("/", () => {
 	return "Hello";
 });
 
-app.listen(SERVER_PORT, () => {
-	console.log(`LISTENING ON PORT http://localhost:${SERVER_PORT}/`);
+app.listen(process.env.SERVER_PORT, () => {
+	console.log(
+		`LISTENING ON PORT http://localhost:${process.env.SERVER_PORT}/`
+	);
 });
