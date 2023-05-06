@@ -14,8 +14,8 @@ model User {
   id           Int     @id @default(autoincrement())
   email        String? @unique
   username     String
-  passwordHash String
-  salt         String
+  passwordHash Bytes   @db.ByteA
+  salt         Bytes   @db.ByteA
   page         Page[]
 }
 
