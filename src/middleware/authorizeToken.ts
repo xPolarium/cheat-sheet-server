@@ -10,8 +10,9 @@ export function authorizeToken(
 ) {
 	const token = req.cookies.token;
 	try {
-		const user = jwt.verify(token, process.env.API_SECRET) as User;
-		req.user = user;
+		const user = jwt.verify(token, process.env.API_SECRET);
+
+		req.user = user as User;
 		next();
 	} catch (error) {
 		res.clearCookie("token");

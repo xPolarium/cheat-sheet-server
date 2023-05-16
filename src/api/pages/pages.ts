@@ -7,38 +7,47 @@ import { pageSchema } from "../../utils/schemas";
 export const pagesRouter = Router();
 
 // Get all pages for :userId
-pagesRouter.get("/pages/:userId", async (req: Request, res: Response) => {
-	try {
-		const userId = parseInt(req.params.userId, 10);
+pagesRouter.get(
+	"/pages/:userId",
+	authorizeToken,
+	async (req: Request, res: Response) => {
+		try {
+			const userId = parseInt(req.params.userId, 10);
 
-		const pages = await prisma.page.findMany({
-			where: {
-				userId,
-			},
-		});
+			if (req.user.id !== userId) throw new Error("User not authorized.");
 
-		if (!pages)
-			throw new Error(
-				`Could not find that user's page list: User - ${userId}`
-			);
+			const pages = await prisma.page.findMany({
+				where: {
+					userId,
+				},
+			});
 
-		res.status(200).json({
-			message: "Found that user's saved pages!",
-			count: pages.length,
-			pages,
-		});
-	} catch (error) {
-		res.status(404).json(error);
+			if (!pages)
+				throw new Error(
+					`Could not find that user's page list: User - ${userId}`
+				);
+
+			res.status(200).json({
+				message: "Found that user's saved pages!",
+				count: pages.length,
+				pages,
+			});
+		} catch (error) {
+			res.status(404).json(error);
+		}
 	}
-});
+);
 
 // Get one :pageId for :userId
 pagesRouter.get(
 	"/pages/:userId/:pageId",
+	authorizeToken,
 	async (req: Request, res: Response) => {
 		try {
 			const userId = parseInt(req.params.userId, 10);
 			const pageId = parseInt(req.params.pageId, 10);
+
+			if (req.user.id !== userId) throw new Error("User not authorized.");
 
 			const page = await prisma.page.findFirst({
 				where: {
@@ -63,40 +72,49 @@ pagesRouter.get(
 );
 
 // Create one page for :userId
-pagesRouter.post("/pages/:userId", async (req: Request, res: Response) => {
-	try {
-		const { title } = pageSchema.parse(req.body);
-		const userId = parseInt(req.params.userId, 10);
+pagesRouter.post(
+	"/pages/:userId",
+	authorizeToken,
+	async (req: Request, res: Response) => {
+		try {
+			const { title } = pageSchema.parse(req.body);
+			const userId = parseInt(req.params.userId, 10);
 
-		const page = await prisma.page.create({
-			data: {
-				userId,
-				title,
-			},
-		});
+			if (req.user.id !== userId) throw new Error("User not authorized.");
 
-		if (!page)
-			throw new Error(
-				`Could not find the page for that user: User - ${userId}`
-			);
+			const page = await prisma.page.create({
+				data: {
+					userId,
+					title,
+				},
+			});
 
-		res.status(200).json({
-			message: `Created a new page for that user: User - ${userId}`,
-			page,
-		});
-	} catch (error) {
-		res.status(404).json(error);
+			if (!page)
+				throw new Error(
+					`Could not find the page for that user: User - ${userId}`
+				);
+
+			res.status(200).json({
+				message: `Created a new page for that user: User - ${userId}`,
+				page,
+			});
+		} catch (error) {
+			res.status(404).json(error);
+		}
 	}
-});
+);
 
 // Update one :pageId for :userId
 pagesRouter.put(
 	"/pages/:userId/:pageId",
+	authorizeToken,
 	async (req: Request, res: Response) => {
 		try {
 			const { title } = pageSchema.parse(req.body);
 			const userId = parseInt(req.params.userId, 10);
 			const pageId = parseInt(req.params.pageId, 10);
+
+			if (req.user.id !== userId) throw new Error("User not authorized.");
 
 			const page = await prisma.page.updateMany({
 				where: { id: pageId, userId },
@@ -123,11 +141,14 @@ pagesRouter.put(
 // Delete on :pageId for :userId
 pagesRouter.delete(
 	"/pages/:userId/:pageId",
+	authorizeToken,
 	async (req: Request, res: Response) => {
 		try {
 			const { title } = pageSchema.parse(req.body);
 			const userId = parseInt(req.params.userId, 10);
 			const pageId = parseInt(req.params.pageId, 10);
+
+			if (req.user.id !== userId) throw new Error("User not authorized.");
 
 			const deletedPage = await prisma.page.delete({
 				where: {
